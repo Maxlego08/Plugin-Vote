@@ -62,12 +62,12 @@ class StatisticsController extends Controller
         $queryVotes = Vote::whereDate('created_at', '>=', $date)
             ->get(['id', 'created_at'])
             ->countBy(function ($vote) {
-               return $vote->created_at->translatedFormat('D M');
+               return $vote->created_at->translatedFormat('l j F Y');
             });
 
         for ($i = 0; $i < 30; $i++) {
             $date->addDay();
-            $time = $date->translatedFormat('D M');
+            $time = $date->translatedFormat('l j F Y');
             $votes[$time] = $queryVotes->get($time, 0);
         }
 
