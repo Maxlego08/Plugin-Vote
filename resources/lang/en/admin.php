@@ -70,4 +70,15 @@ return [
 
         'empty' => 'No votes this month.',
     ],
+
+    'statistics' => [
+        'title' => 'Statistics',
+        'stats' => [
+            'global' => 'Nombre de votes',
+            'month' => 'Nombre de votes ce mois-ci',
+            'month-char' => 'Nombre de votes ce mois-ci',
+            'week' => 'Nombre de votes cette semaine',
+            'day' => "Nombre de votes aujourd'hui",
+        ],
+    ],
 ];
