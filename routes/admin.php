@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('can:vote.admin')->group(function () {
     Route::get('/settings', 'SettingController@show')->name('settings');
     Route::post('/settings', 'SettingController@save')->name('settings.save');
-
+    Route::get('/statistics', 'StatisticsController@index')->name('statistics');
     Route::get('sites/verification', 'SiteController@verificationForUrl')->name('sites.verification');
 
     Route::resource('sites', 'SiteController')->except('show');

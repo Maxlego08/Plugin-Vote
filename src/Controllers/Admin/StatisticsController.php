@@ -1,26 +1,19 @@
 <?php
 
-
 namespace Azuriom\Plugin\Vote\Controllers\Admin;
 
-
 use Azuriom\Http\Controllers\Controller;
-use Azuriom\Models\User;
 use Azuriom\Plugin\Vote\Models\Vote;
-use Carbon\Carbon;
-use Carbon\Traits\Date;
-use Illuminate\Support\Facades\DB;
 
 class StatisticsController extends Controller
 {
-
     /**
-     * Open view
+     * Open view.
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        return view("vote::admin.statistics", [
+        return view('vote::admin.statistics', [
             'voteAmount' => Vote::all()->count(),
             'voteAmountMonth' => $this->getVoteMonth(),
             'voteAmountWeek' => $this->getVoteWeek(),
@@ -30,7 +23,6 @@ class StatisticsController extends Controller
             'voteLastYear' => $this->getVoteLastYearChar(),
             'months' => $this->getMonthAsString(),
         ]);
-
     }
 
     /**
@@ -62,7 +54,6 @@ class StatisticsController extends Controller
      */
     private function getVoteMonthChar()
     {
-
         $date = now()->subMonths(1);
         $votes = [];
 
@@ -87,7 +78,6 @@ class StatisticsController extends Controller
      */
     private function getVoteYearChar()
     {
-
         $date = now()->firstOfYear();
         $votes = [];
 
@@ -112,7 +102,6 @@ class StatisticsController extends Controller
      */
     private function getVoteLastYearChar()
     {
-
         $date = now()->firstOfYear()->subYears(1);
         $votes = [];
 

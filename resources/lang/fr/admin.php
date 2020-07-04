@@ -75,11 +75,5 @@ return [
             'week' => 'Nombre de votes cette semaine',
             'day' => "Nombre de votes aujourd'hui",
         ],
-        'top' => [
-            'current-year' => 'Classement des voteurs cette année',
-            'last-year' => "Classement des voteurs l'année dernière",
-        ],
-
-    ]
-
+    ],
 ];

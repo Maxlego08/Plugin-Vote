@@ -68,16 +68,12 @@ return [
     'statistics' => [
         'title' => 'Statistics',
         'stats' => [
-            'global' => 'Nombre de votes',
-            'month' => 'Nombre de votes ce mois-ci',
-            'month-char' => 'Nombre de votes ce mois-ci',
-            'year-char' => 'Nombre de votes cette année',
-            'week' => 'Nombre de votes cette semaine',
-            'day' => "Nombre de votes aujourd'hui",
-        ],
-        'top' => [
-          'current-year' => 'Classement des voteurs cette année',
-          'last-year' => "Classement des voteurs l'année dernière",
+            'global' => 'Number of votes',
+            'month' => 'Number of votes this month',
+            'month-char' => 'Number of votes this month',
+            'year-char' => 'Number of votes this year',
+            'week' => 'Number of votes this week',
+            'day' => "Number of votes today",
         ],
     ],
 ];
