@@ -5,9 +5,9 @@ return [
         'title' => 'Vote',
 
         'settings' => 'Settings',
+        'statistics' => 'Statistics',
         'sites' => 'Sites',
         'rewards' => 'Rewards',
-        'votes' => 'Votes',
     ],
 
     'permission' => 'View and manage vote plugin',
@@ -56,19 +56,13 @@ return [
         'need-online' => 'The user must be online to receive the reward (only available with AzLink)',
         'enable' => 'Enable the reward',
 
-        'commands-info' => 'You can use <code>{player}</code> to use the player name and <code>{reward}</code> to use the reward name. The command must not start with <code>/</code>',
+        'commands-info' => 'You can use <code>{player}</code> to use the player name and <code>{reward}</code> to use the reward name.',
 
         'status' => [
             'created' => 'The reward has been created.',
             'updated' => 'This reward has been updated.',
             'deleted' => 'This reward has been deleted.',
         ],
-    ],
-
-    'votes' => [
-        'title' => 'Votes',
-
-        'empty' => 'No votes this month.',
     ],
 
     'statistics' => [
@@ -80,6 +74,10 @@ return [
             'year-char' => 'Nombre de votes cette année',
             'week' => 'Nombre de votes cette semaine',
             'day' => "Nombre de votes aujourd'hui",
+        ],
+        'top' => [
+          'current-year' => 'Classement des voteurs cette année',
+          'last-year' => "Classement des voteurs l'année dernière",
         ],
     ],
 ];

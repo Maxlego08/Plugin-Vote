@@ -120,13 +120,18 @@
 
                 <ul class="nav nav-tabs">
                     @foreach($months as $month)
-                        <li><a data-toggle="tab" href="#{{$month}}">{{$month}}</a></li>
+                        @if(now()->month == $month)
+                            <li style="margin: 10px" class="active"><a data-toggle="tab"
+                                                                       href="#{{$month}}-now">{{$month}}</a></li>
+                        @else
+                            <li style="margin: 10px"><a data-toggle="tab" href="#{{$month}}-now">{{$month}}</a></li>
+                        @endif
                     @endforeach
                 </ul>
 
                 <div class="tab-content">
                     @foreach($months as $month)
-                        <div class="tab-pane" id="{{$month}}">
+                        <div class="tab-pane" id="{{$month}}-now">
                             <table class="table">
                                 <thead>
                                 <tr>
@@ -138,6 +143,45 @@
                                 <tbody>
 
                                 @foreach($votes[$month] as $id => $vote)
+                                    <tr>
+                                        <th scope="row">#{{ $id }}</th>
+                                        <td>{{ $vote['user']->name }}</td>
+                                        <td>{{ $vote['votes'] }}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-12 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{{ trans('vote::admin.statistics.top.last-year') }}</h6>
+                </div>
+
+                <ul class="nav nav-tabs">
+                    @foreach($months as $month)
+                        <li style="margin: 10px"><a data-toggle="tab" href="#{{$month}}-last">{{$month}}</a></li>
+                    @endforeach
+                </ul>
+
+                <div class="tab-content">
+                    @foreach($months as $month)
+                        <div class="tab-pane" id="{{$month}}-last">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">{{ trans('messages.fields.name') }}</th>
+                                    <th scope="col">{{ trans('vote::messages.fields.votes') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($lastVotes[$month] as $id => $vote)
                                     <tr>
                                         <th scope="row">#{{ $id }}</th>
                                         <td>{{ $vote['user']->name }}</td>

@@ -7,7 +7,7 @@ return [
         'settings' => 'Paramètres',
         'sites' => 'Sites',
         'rewards' => 'Récompenses',
-        'votes' => 'Votes',
+        'statistics' => 'Statistique',
     ],
 
     'permission' => 'Voir et gérer le plugin vote',
@@ -56,19 +56,13 @@ return [
         'need-online' => 'L\'utilisateur doit être en ligne pour recevoir la récompense (uniquement disponible avec AzLink)',
         'enable' => 'Activer la récompense',
 
-        'commands-info' => 'Vous pouvez utiliser <code>{player}</code> pour utiliser le nom du joueur et <code>{reward}</code> pour utiliser le nom de la récompense. La commande ne doit pas contenir de <code>/</code> au début.',
+        'commands-info' => 'Vous pouvez utiliser <code>{player}</code> pour utiliser le nom du joueur et <code>{reward}</code> pour utiliser le nom de la récompense.',
 
         'status' => [
             'created' => 'La récompense a été créée.',
             'updated' => 'La récompense a été mise à jour.',
             'deleted' => 'La récompense a été supprimée.',
         ],
-    ],
-
-    'votes' => [
-        'title' => 'Votes',
-
-        'empty' => 'Pas de votes ce mois-ci.',
     ],
 
     'statistics' => [
@@ -81,6 +75,11 @@ return [
             'week' => 'Nombre de votes cette semaine',
             'day' => "Nombre de votes aujourd'hui",
         ],
-    ],
+        'top' => [
+            'current-year' => 'Classement des voteurs cette année',
+            'last-year' => "Classement des voteurs l'année dernière",
+        ],
+
+    ]
 
 ];
