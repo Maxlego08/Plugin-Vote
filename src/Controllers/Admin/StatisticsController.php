@@ -72,7 +72,6 @@ class StatisticsController extends Controller
         return collect($votes);
     }
 
-
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -95,7 +94,6 @@ class StatisticsController extends Controller
 
         return collect($votes);
     }
-
 
     /**
      * @return \Illuminate\Support\Collection

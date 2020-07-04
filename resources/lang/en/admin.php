@@ -73,7 +73,7 @@ return [
             'month-char' => 'Number of votes this month',
             'year-char' => 'Number of votes this year',
             'week' => 'Number of votes this week',
-            'day' => "Number of votes today",
+            'day' => 'Number of votes today',
         ],
     ],
 ];
