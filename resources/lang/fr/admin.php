@@ -77,8 +77,10 @@ return [
             'global' => 'Nombre de votes',
             'month' => 'Nombre de votes ce mois-ci',
             'month-char' => 'Nombre de votes ses 30 derniers jours',
+            'year-char' => 'Nombre de votes cette année',
             'week' => 'Nombre de votes cette semaine',
             'day' => "Nombre de votes aujourd'hui",
         ],
     ],
+
 ];
