@@ -5,9 +5,9 @@ return [
         'title' => 'Vote',
 
         'settings' => 'Settings',
-        'statistics' => 'Statistics',
         'sites' => 'Sites',
         'rewards' => 'Rewards',
+        'votes' => 'Votes',
     ],
 
     'permission' => 'View and manage vote plugin',
@@ -65,15 +65,15 @@ return [
         ],
     ],
 
-    'statistics' => [
-        'title' => 'Statistics',
-        'stats' => [
-            'global' => 'Number of votes',
-            'month' => 'Number of votes this month',
-            'month-char' => 'Number of votes this month',
-            'year-char' => 'Number of votes this year',
-            'week' => 'Number of votes this week',
-            'day' => 'Number of votes today',
-        ],
+    'votes' => [
+        'title' => 'Votes',
+
+        'empty' => 'No votes this month.',
+
+        'votes' => 'Votes count',
+
+        'month' => 'Votes count this month',
+        'week' => 'Votes count this week',
+        'day' => 'Votes count today',
     ],
 ];

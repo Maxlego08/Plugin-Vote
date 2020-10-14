@@ -7,7 +7,7 @@ return [
         'settings' => 'Paramètres',
         'sites' => 'Sites',
         'rewards' => 'Récompenses',
-        'statistics' => 'Statistique',
+        'votes' => 'Votes',
     ],
 
     'permission' => 'Voir et gérer le plugin vote',
@@ -65,15 +65,15 @@ return [
         ],
     ],
 
-    'statistics' => [
-        'title' => 'Statistiques',
-        'stats' => [
-            'global' => 'Nombre de votes',
-            'month' => 'Nombre de votes ce mois-ci',
-            'month-char' => 'Nombre de votes ses 30 derniers jours',
-            'year-char' => 'Nombre de votes cette année',
-            'week' => 'Nombre de votes cette semaine',
-            'day' => "Nombre de votes aujourd'hui",
-        ],
+    'votes' => [
+        'title' => 'Votes',
+
+        'empty' => 'Pas de votes ce mois-ci.',
+
+        'votes' => 'Nombre de votes',
+
+        'month' => 'Nombre de votes ce mois-ci',
+        'week' => 'Nombre de votes cette semaine',
+        'day' => 'Nombre de votes aujourd\'hui',
     ],
 ];
