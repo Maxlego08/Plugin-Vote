@@ -7,15 +7,19 @@ return [
         'settings' => 'Settings',
         'sites' => 'Sites',
         'rewards' => 'Rewards',
+        'votes' => 'Votes',
     ],
 
-    'permission' => 'View and manage vote plugin',
+    'permission' => 'Manage vote plugin',
 
     'settings' => [
         'title' => 'Vote page settings',
 
         'count' => 'Top Players Count',
         'display-rewards' => 'Show rewards in vote page',
+        'ip-compatibility' => 'Enable IPv4/IPv6 compatibility',
+        'ip-compatibility-info' => 'This option allows you to correct votes that are not verified on voting sites that don\'t accept IPv6 while your site does, or vice versa.',
+        'commands' => 'Global commands',
     ],
 
     'sites' => [
@@ -35,6 +39,8 @@ return [
         'verifications' => [
             'enable' => 'Enable votes verification',
 
+            'pingback' => 'Pingback URL: :url',
+            'secret' => 'Secret key',
             'server_id' => 'Server ID',
             'token' => 'Token',
             'api_key' => 'API key',
@@ -55,12 +61,24 @@ return [
         'need-online' => 'The user must be online to receive the reward (only available with AzLink)',
         'enable' => 'Enable the reward',
 
-        'commands-info' => 'You can use <code>{player}</code> to use the player name and <code>{reward}</code> to use the reward name.',
+        'commands-info' => 'You can use <code>{player}</code> to use the player name and <code>{reward}</code> to use the reward name. The command must not start with <code>/</code>',
 
         'status' => [
             'created' => 'The reward has been created.',
             'updated' => 'This reward has been updated.',
             'deleted' => 'This reward has been deleted.',
         ],
+    ],
+
+    'votes' => [
+        'title' => 'Votes',
+
+        'empty' => 'No votes this month.',
+
+        'votes' => 'Votes count',
+
+        'month' => 'Votes count this month',
+        'week' => 'Votes count this week',
+        'day' => 'Votes count today',
     ],
 ];

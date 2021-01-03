@@ -4,6 +4,7 @@ namespace Azuriom\Plugin\Vote\Models;
 
 use Azuriom\Models\Server;
 use Azuriom\Models\Traits\HasTablePrefix;
+use Azuriom\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
- * @property \Azuriom\Models\Server $server
+ * @property \Azuriom\Models\Server|null $server
  * @property \Illuminate\Support\Collection|\Azuriom\Plugin\Vote\Models\Vote[] $votes
  *
  * @method static \Illuminate\Database\Eloquent\Builder enabled()
@@ -67,6 +68,28 @@ class Reward extends Model
     public function server()
     {
         return $this->belongsTo(Server::class);
+    }
+
+    public function giveTo(User $user)
+    {
+        if ($this->money > 0) {
+            $user->addMoney($this->money);
+            $user->save();
+        }
+
+        $commands = $this->commands ?? [];
+
+        if ($globalCommands = setting('vote.commands')) {
+            $commands = array_merge($commands, json_decode($globalCommands));
+        }
+
+        $commands = array_map(function ($el) {
+            return str_replace('{reward}', $this->name, $el);
+        }, $commands);
+
+        if ($this->server !== null && ! empty($commands)) {
+            $this->server->bridge()->executeCommands($commands, $user->name, $this->need_online);
+        }
     }
 
     /**

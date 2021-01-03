@@ -5,7 +5,9 @@ namespace Azuriom\Plugin\Vote\Verification;
 use Azuriom\Models\User;
 use Azuriom\Plugin\Vote\Models\Site;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class VoteChecker
@@ -28,6 +30,16 @@ class VoteChecker
             ->setApiUrl('https://www.serveurs-minecraft.org/api/is_valid_vote.php?id={server}&ip={ip}&duration=5&format=json')
             ->retrieveKeyByRegex('/^serveurs-minecraft\.org\/vote\.php\?id=(\d+)/')
             ->verifyByJson('votes', '1'));
+
+        $this->register(VoteVerifier::for('serveurs-mc.net')
+            ->setApiUrl('https://serveurs-mc.net/api/hasVote/{server}/{ip}/10')
+            ->retrieveKeyByRegex('/^serveurs-mc\.net\/serveur\/(\d+)/')
+            ->verifyByJson('hasVote', true));
+
+        $this->register(VoteVerifier::for('serveur-minecraft.com')
+            ->setApiUrl('https://serveur-minecraft.com/api/1/vote/{server}/{ip}/json')
+            ->retrieveKeyByRegex('/^serveur-minecraft\.com\/(\d+)/')
+            ->verifyByJson('vote', '1'));
 
         $this->register(VoteVerifier::for('serveur-minecraft.fr')
             ->setApiUrl('https://serveur-minecraft.fr/api-{server}_{ip}.json')
@@ -62,25 +74,50 @@ class VoteChecker
             ->retrieveKeyByRegex('/^liste-serveurs\.fr\/[\w\d-]+\.(\d+)/', 2)
             ->verifyByJson('success', true));
 
+        $this->register(VoteVerifier::for('serveur-top.fr')
+            ->setApiUrl('https://serveur-top.fr/api/checkVote/{server}/{ip}')
+            ->retrieveKeyByRegex('/^serveur-top\.fr\/[\w\d-]+\.(\d+)/', 2)
+            ->verifyByJson('success', true));
+
         $this->register(VoteVerifier::for('liste-minecraft-serveurs.com')
             ->setApiUrl('https://www.liste-minecraft-serveurs.com/Api/Worker/id_server/{server}/ip/{ip}')
             ->retrieveKeyByRegex('/^liste-minecraft-serveurs\.com\/Serveur\/(\d+)/', 2)
             ->verifyByJson('result', 202));
+
+        $this->register(VoteVerifier::for('topserveursminecraft.com')
+            ->setApiUrl('https://topserveursminecraft.com/api/server={server}&ip={ip}')
+            ->retrieveKeyByRegex('/^topserveursminecraft\.com\/[\w\d]+\.(\d+)/', 2)
+            ->verifyByJson('voted', 1));
 
         $this->register(VoteVerifier::for('liste-serveur.fr')
             ->setApiUrl('https://www.liste-serveur.fr/api/hasVoted/{server}/{ip}')
             ->requireKey('secret')
             ->verifyByJson('hasVoted', true));
 
+        $this->register(VoteVerifier::for('minecraft-server.eu')
+            ->setApiUrl('https://minecraft-server.eu/api/v1/?object=votes&element=claim&key={server}&username={name}')
+            ->requireKey('api_key')
+            ->verifyByValue(1));
+
         $this->register(VoteVerifier::for('minecraft-mp.com')
             ->setApiUrl('https://minecraft-mp.com/api/?object=votes&element=claim&key={server}&username={name}')
             ->requireKey('api_key')
             ->verifyByValue(1));
 
-        $this->register(VoteVerifier::for('gmod-servers.com')
-            ->setApiUrl('https://gmod-servers.com/api/?object=votes&element=claim&key={server}&steamid={id}')
-            ->requireKey('api_key')
-            ->verifyByValue(1));
+        $listForge = [
+            'gmod-servers.com',
+            'ark-servers.net',
+            'rust-servers.net',
+            'tf2-servers.com',
+            'counter-strike-servers.net',
+        ];
+
+        foreach ($listForge as $domain) {
+            $this->register(VoteVerifier::for($domain)
+                ->setApiUrl("https://{$domain}/api/?object=votes&element=claim&key={server}&steamid={id}")
+                ->requireKey('api_key')
+                ->verifyByValue(1));
+        }
 
         $this->register(VoteVerifier::for('trackyserver.com')
             ->setApiUrl('http://www.api.trackyserver.com/vote/?action=claim&key={server}&steamid={id}')
@@ -106,6 +143,16 @@ class VoteChecker
             ->setApiUrl('https://api.liste-serveurs-minecraft.org/vote/vote_verification.php?server_id={server}&ip={ip}&duration=5')
             ->requireKey('server_id')
             ->verifyByValue('1'));
+
+        $this->register(VoteVerifier::for('gtop100.com')
+            ->retrieveKeyByRegex('/^gtop100\.com\/topsites\/[\w\d-]+\/sitedetails\/[\w\d-]+\-(\d+)/')
+            ->verifyByPingback(function (Request $request) {
+                abort_if(! in_array($request->ip(), ['198.148.82.98', '198.148.82.99'], true), 403);
+
+                if ($request->input('Successful') === '0') {
+                    Cache::put("vote.sites.gtop100.com.{$request->input('VoterIp')}", true, now()->addMinutes(5));
+                }
+            }));
     }
 
     public function hasVerificationForSite(string $domain)

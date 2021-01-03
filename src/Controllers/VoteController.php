@@ -8,8 +8,9 @@ use Azuriom\Plugin\Vote\Models\Reward;
 use Azuriom\Plugin\Vote\Models\Site;
 use Azuriom\Plugin\Vote\Models\Vote;
 use Azuriom\Plugin\Vote\Verification\VoteChecker;
+use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class VoteController extends Controller
 {
@@ -20,29 +21,10 @@ class VoteController extends Controller
      */
     public function index()
     {
-        $votes = DB::table((new Vote())->getTable())
-            ->select(['user_id', DB::raw('COUNT(user_id) AS count')])
-            ->where('created_at', '>', now()->startOfMonth())
-            ->groupBy('user_id')
-            ->orderByDesc('count')
-            ->take(setting('vote.top-players-count', 10))
-            ->get();
-
-        $users = User::findMany($votes->pluck('user_id'))->keyBy('id');
-
-        $votes = $votes->mapWithKeys(function ($vote, $position) use ($users) {
-            return [
-                $position + 1 => [
-                    'user' => $users->get($vote->user_id),
-                    'votes' => $vote->count,
-                ],
-            ];
-        });
-
         return view('vote::index', [
-            'sites' => Site::enabled()->whereHas('rewards')->get(),
+            'sites' => Site::enabled()->get(),
             'rewards' => Reward::orderByDesc('chances')->get(),
-            'votes' => $votes,
+            'votes' => Vote::getTopVoters(now()->startOfMonth()),
         ]);
     }
 
@@ -61,15 +43,19 @@ class VoteController extends Controller
     {
         $user = $request->user() ?? User::firstWhere('name', $request->input('user'));
 
-        if ($user === null) {
-            abort(401);
-        }
+        abort_if($user === null, 401);
 
-        $nextVoteTime = $this->getNextVoteTime($site, $user);
+        $nextVoteTime = $site->getNextVoteTime($user, $request);
 
         if ($nextVoteTime !== null) {
+            $formattedTime = $nextVoteTime->diffForHumans([
+                'parts' => 2,
+                'join' => true,
+                'syntax' => CarbonInterface::DIFF_ABSOLUTE,
+            ]);
+
             return response()->json([
-                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime]),
+                'message' => trans('vote::messages.vote-delay', ['time' => $formattedTime]),
             ], 422);
         }
 
@@ -86,15 +72,19 @@ class VoteController extends Controller
     {
         $user = $request->user() ?? User::firstWhere('name', $request->input('user'));
 
-        if ($user === null) {
-            abort(401);
-        }
+        abort_if($user === null, 401);
 
-        $nextVoteTime = $this->getNextVoteTime($site, $user);
+        $nextVoteTime = $site->getNextVoteTime($user, $request);
 
         if ($nextVoteTime !== null) {
+            $formattedTime = $nextVoteTime->diffForHumans([
+                'parts' => 2,
+                'join' => true,
+                'syntax' => CarbonInterface::DIFF_ABSOLUTE,
+            ]);
+
             return response()->json([
-                'message' => trans('vote::messages.vote-delay', ['time' => $nextVoteTime]),
+                'message' => trans('vote::messages.vote-delay', ['time' => $formattedTime]),
             ], 422);
         }
 
@@ -112,61 +102,20 @@ class VoteController extends Controller
             ]);
         }
 
-        $reward = $this->getRandomReward($site);
+        $next = now()->addMinutes($site->vote_delay);
+        Cache::put('votes.site.'.$site->id.'.'.$request->ip(), $next, $next);
 
-        $site->votes()->create([
-            'user_id' => $user->id,
-            'reward_id' => $reward->id,
-        ]);
+        $reward = $site->getRandomReward();
 
-        if ($reward->money > 0) {
-            $user->addMoney($reward->money);
-            $user->save();
-        }
+        if ($reward !== null) {
+            $site->votes()->create([
+                'user_id' => $user->id,
+                'reward_id' => $reward->id,
+            ]);
 
-        $commands = array_map(function ($el) use ($reward) {
-            return str_replace('{reward}', $reward->name, $el);
-        }, $reward->commands ?? []);
-
-        if ($reward->server !== null) {
-            $reward->server->bridge()->executeCommands($commands, $user->name, $reward->need_online);
+            $reward->giveTo($user);
         }
 
         return response()->json(['message' => trans('vote::messages.vote-success')]);
-    }
-
-    private function getNextVoteTime(Site $site, User $user)
-    {
-        $lastVoteTime = $site->votes()
-            ->where('user_id', $user->id)
-            ->where('created_at', '>', now()->subMinutes($site->vote_delay))
-            ->latest()
-            ->value('created_at');
-
-        if ($lastVoteTime === null) {
-            return null;
-        }
-
-        return $lastVoteTime->addMinutes($site->vote_delay)->diffForHumans();
-    }
-
-    private function getRandomReward(Site $site)
-    {
-        $rewards = $site->rewards;
-
-        $total = $rewards->sum('chances');
-        $random = random_int(0, $total);
-
-        $sum = 0;
-
-        foreach ($rewards as $reward) {
-            $sum += $reward->chances;
-
-            if ($sum >= $random) {
-                return $reward;
-            }
-        }
-
-        return $rewards->first();
     }
 }

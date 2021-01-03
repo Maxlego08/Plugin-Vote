@@ -1,5 +1,3 @@
-let voting = false;
-
 function toggleStep(step) {
     document.querySelectorAll('[data-vote-step]').forEach(function (el) {
         el.classList.add('d-none');
@@ -23,10 +21,6 @@ function displayVoteAlert(message, level) {
 
 document.querySelectorAll('[data-site-url]').forEach(function (el) {
     el.addEventListener('click', function (ev) {
-        if (voting === true) {
-            return;
-        }
-
         ev.preventDefault();
 
         if (el.classList.contains('disabled')) {
@@ -38,9 +32,7 @@ document.querySelectorAll('[data-site-url]').forEach(function (el) {
         axios.post(el.dataset['siteUrl'], {
             user: username,
         }).then(function () {
-            voting = true;
-            el.click();
-            voting = false;
+            window.open(el.getAttribute('href'), '_blank');
 
             el.classList.add('disabled');
 

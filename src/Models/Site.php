@@ -3,8 +3,11 @@
 namespace Azuriom\Plugin\Vote\Models;
 
 use Azuriom\Models\Traits\HasTablePrefix;
+use Azuriom\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $id
@@ -60,6 +63,45 @@ class Site extends Model
     public function votes()
     {
         return $this->hasMany(Vote::class);
+    }
+
+    public function getRandomReward()
+    {
+        $total = $this->rewards->sum('chances');
+        $random = random_int(0, $total);
+
+        $sum = 0;
+
+        foreach ($this->rewards as $reward) {
+            $sum += $reward->chances;
+
+            if ($sum >= $random) {
+                return $reward;
+            }
+        }
+
+        return $this->rewards->first();
+    }
+
+    public function getNextVoteTime(User $user, Request $request)
+    {
+        $lastVoteTime = $this->votes()
+            ->where('user_id', $user->id)
+            ->where('created_at', '>', now()->subMinutes($this->vote_delay))
+            ->latest()
+            ->value('created_at');
+
+        if ($lastVoteTime !== null) {
+            return $lastVoteTime->addMinutes($this->vote_delay);
+        }
+
+        $nextVoteTimeForIp = Cache::get('votes.site.'.$this->id.'.'.$request->ip());
+
+        if ($nextVoteTimeForIp === null || $nextVoteTimeForIp->isPast()) {
+            return null;
+        }
+
+        return $nextVoteTimeForIp;
     }
 
     /**
