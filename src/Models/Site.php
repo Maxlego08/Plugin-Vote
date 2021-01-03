@@ -51,6 +51,7 @@ class Site extends Model
      * @var array
      */
     protected $casts = [
+        'need_online' => 'boolean',
         'has_verification' => 'boolean',
         'is_enabled' => 'boolean',
     ];
